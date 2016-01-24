@@ -50,3 +50,17 @@ kpblm_set_pilot_points = {
 kpblm_get_pilot_points = {
 	"kpblm" callExtension format["get_pilot_points;%1", getPlayerUID _this];
 };
+kpblm_show_hangar = {
+	private "_result";
+	private "_string";
+	_result = [];
+	_string = "kpblm" callExtension format["show_hangar;%1", getPlayerUID _this];
+	{ result = result + [([_x, " "] call CBA_fnc_split)]} forEach ([_string, ":"] call CBA_fnc_split);
+	_result;
+};
+kpblm_add_to_hangar = {
+	"kpblm" callExtension format["add_to_hangar;%1;%2", getPlayerUID (_this select 0), (_this select 1)];
+};
+kpblm_remove_from_hangar = {
+	"kpblm" callExtension format["remove_from_hangar;%1;%2", getPlayerUID (_this select 0), (_this select 1)];
+};

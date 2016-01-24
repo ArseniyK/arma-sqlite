@@ -6,6 +6,7 @@ import std.conv;
 import std.exception;
 import util.log;
 import sqlite.database;
+import std.base64;
 
 __gshared HINSTANCE g_hInst;
 
@@ -67,6 +68,23 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 				string query = format("INSERT OR IGNORE INTO players (uid) VALUES ('%s')", command[1]);
 				log.info("%s", query);
 				db.command(query);
+				break;
+			case "show_hangar":
+				string query = format("select vehicle, count(vehicle) from hangar where uid='%s' group by vehicle", command[1]);
+				log.info("%s", query);
+				Row[] results2 = db.command(query);
+				foreach( row; results2 )
+					result ~= row.toString + ":";
+				break;
+			case "add_to_hangar":
+				string query = format("INSERT INTO hangar (uid, vehicle) VALUES ('%s', '%s')", command[1], command[2]);
+				log.info("%s", query);
+				Row[] results2 = db.command(query);
+				break;
+			case "remove_from_hangar":
+				string query = format("DELETE from hangar WHERE id in (Select id from hangar Where uid is '%s' and vehicle is '%s' limit 1)", command[1], command[2]);
+				log.info("%s", query);
+				Row[] results2 = db.command(query);
 				break;
 			case "get_player_score":
 				string query = format("SELECT score FROM players WHERE uid='%s'", command[1]);
@@ -137,9 +155,10 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 				Row[] results2 = db.command(query);
 				foreach( row; results2 )
 					result ~= row.toString;
+				result = cast (string) Base64.decode(result);
 				break;
 			case "set_targets":				
-				string query = format("UPDATE mission SET targets='%s' WHERE id=1", command[1]);
+				string query = format("UPDATE mission SET targets=%s WHERE id=1", Base64.encode(cast (ubyte[]) command[1]));
 				log.info("%s", query);
 				db.command(query);
 				result = db_name;
