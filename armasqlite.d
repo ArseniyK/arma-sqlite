@@ -74,7 +74,16 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 				log.info("%s", query);
 				Row[] results2 = db.command(query);
 				foreach( row; results2 )
-					result ~= row.toString + ":";
+					result ~= row.toString ~ ":";
+				if( result.length > 0 )
+					result = result[ 0 .. $ -1 ];
+				break;
+			case "count_hangar":
+				string query = format("select count(vehicle) from hangar where uid='%s'", command[1]);
+				log.info("%s", query);
+				Row[] results2 = db.command(query);
+				foreach( row; results2 )
+					result ~= row.toString;
 				break;
 			case "add_to_hangar":
 				string query = format("INSERT INTO hangar (uid, vehicle) VALUES ('%s', '%s')", command[1], command[2]);

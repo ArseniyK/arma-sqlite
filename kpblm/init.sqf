@@ -55,7 +55,7 @@ kpblm_show_hangar = {
 	private "_string";
 	_result = [];
 	_string = "kpblm" callExtension format["show_hangar;%1", getPlayerUID _this];
-	{ result = result + [([_x, " "] call CBA_fnc_split)]} forEach ([_string, ":"] call CBA_fnc_split);
+	{ _result = _result + [([_x, "	"] call CBA_fnc_split)]} forEach ([_string, ":"] call CBA_fnc_split);
 	_result;
 };
 kpblm_add_to_hangar = {
@@ -63,4 +63,7 @@ kpblm_add_to_hangar = {
 };
 kpblm_remove_from_hangar = {
 	"kpblm" callExtension format["remove_from_hangar;%1;%2", getPlayerUID (_this select 0), (_this select 1)];
+};
+kpblm_count_hangar = {
+	"kpblm" callExtension format["count_hangar;%1", getPlayerUID _this];
 };
