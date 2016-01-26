@@ -129,8 +129,7 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 			case "set_player_weapons":
 				string query = format("UPDATE players SET weapons='%s' WHERE uid='%s'",  command[2], command[1]);
 				log.info("%s", query);
-				db.command(query);
-				result = db_name;
+				db.command("UPDATE players SET weapons=? WHERE uid=?;",  cast(Variant) command[2], cast(Variant)command[1]);
 				break;
 			case "get_mission_state":
 				string query = "SELECT finished FROM mission WHERE id=1";
@@ -155,7 +154,7 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 			case "set_target":				
 				string query = format("UPDATE mission SET target='%s' WHERE id=1", command[1]);
 				log.info("%s", query);
-				db.command(query);
+				db.command("UPDATE mission SET target=? WHERE id=1",  cast(Variant) command[1],);
 				result = db_name;
 				break;
 			case "get_targets":
@@ -167,7 +166,7 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 				result = cast (string) Base64.decode(result);
 				break;
 			case "set_targets":				
-				string query = format("UPDATE mission SET targets=%s WHERE id=1", Base64.encode(cast (ubyte[]) command[1]));
+				string query = format("UPDATE mission SET targets='%s' WHERE id=1", Base64.encode(cast (ubyte[]) command[1]));
 				log.info("%s", query);
 				db.command(query);
 				result = db_name;
@@ -176,7 +175,9 @@ export extern (Windows) void RVExtension(char* output, int output_size, const ch
 				string query = "DELETE FROM players";
 				log.info("%s", query);
 				db.command(query);
-				result = db_name;
+				query = "DELETE FROM hangar";
+				log.info("%s", query);
+				db.command(query);
 				break;
 			case "exec":
 				log.info("%s", command[1]);
